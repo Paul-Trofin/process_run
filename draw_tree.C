@@ -37,7 +37,7 @@ void draw_tree() {
     e_tree->SetBranchAddress("m_ee", &m_ee);
     mu_tree->SetBranchAddress("m_mm", &m_mm);
     tau_tree->SetBranchAddress("m_tt", &m_tt);
-    l_k_tree->SetBranchAddress("m_ll", &m_ll);
+    l_tree->SetBranchAddress("m_ll", &m_ll);
     l_k_tree->SetBranchAddress("l_px", &l_px);
     l_k_tree->SetBranchAddress("l_py", &l_py);
     l_k_tree->SetBranchAddress("l_pz", &l_pz);
