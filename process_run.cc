@@ -103,6 +103,8 @@ int main() {
         std::vector<Particle> antimuons;
         std::vector<Particle> taus;
         std::vector<Particle> antitaus;
+        std::vector<Particle> hadrons;
+        std::vector<Particle> zDecays;
 
         // EACH PARTICLE IN CURRENT EVENT
         for (int i = 0; i < pythia.event.size(); ++i) {
@@ -119,17 +121,53 @@ int main() {
                 if (pythia.event[i].id() == -13) { // Antimuon
                     antimuons.push_back(pythia.event[i]);
                 }
-                int motherIndex = pythia.event[i].mother1(); // Parent index
+                if (pythia.event[i].isHadron()) { // Hadrons
+                	hadrons.push_back(pythia.event[i]);
+                }
+                // MOTHER-1 ANALYSIS
+                int motherIndex = pythia.event[i].mother1(); // MOTHER-1
                 if (motherIndex > 0) {
                     Particle &mother = pythia.event[motherIndex];
-
-                    // Check if the parent is a tau lepton
+                    
+                    // Mother = Electron
+                    if (mother.id() == 11) { // Electron
+                        electrons.push_back(mother);
+                    } else if (mother.id() == -11) { // Positron
+                        positrons.push_back(mother);
+                    }
+                    
+                    // Mother = Muon
+                    if (mother.id() == 13) { // Muon
+                        muons.push_back(mother);
+                    } else if (mother.id() == -13) { // Anti-muon
+                        antimuons.push_back(mother);
+                    }
+                    
+                    // Mother = Tau
                     if (mother.id() == 15) { // Tau
                         taus.push_back(mother);
                     } else if (mother.id() == -15) { // Anti-tau
                         antitaus.push_back(mother);
                     }
+                    
+                    if (mother.id() == 23) { // Z boson
+				        zDecays.push_back(pythia.event[i]);
+				        std::cout << "\nMAMA Z!\n";
+				    }
+				}
+				// MOTHER-2 ANALYSIS "GRANMA :)"
+                int motherIndex2 = pythia.event[i].mother2(); // MOTHER-2
+                if (motherIndex2 > 0) {
+                	Particle &mother2 = pythia.event[motherIndex2];
+                    if (mother2.id() == 23) { // Z boson
+				        zDecays.push_back(pythia.event[i]);
+				        std::cout << "\nGRANMA Z!!!\n";
+				    }
                 }
+
+                	
+
+                
             }
         }
 
