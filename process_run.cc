@@ -92,6 +92,12 @@ int main() {
 	l_k_tree->Branch("l_pT", &l_pT, "l_pT/D");
 	l_k_tree->Branch("l_eta", &l_eta, "l_eta/D");
 	l_k_tree->Branch("l_phi", &l_phi, "l_phi/D");
+	
+	// COUNT THE NUMBER OF PARTICLES
+	int Ne = 0, Ne_bar = 0, Nmu = 0, Nmu_bar = 0, Nta = 0, Nta_bar = 0, Nl = 0, Nl_bar = 0, Nha = 0;
+	int moNe = 0, moNe_bar = 0, moNmu = 0, moNmu_bar = 0, moNta = 0, moNta_bar = 0, moNl = 0, moNl_bar = 0, moNha = 0;
+	int gmoNe = 0, gmoNe_bar = 0, gmoNmu = 0, gmoNmu_bar = 0, gmoNta = 0, gmoNta_bar = 0, gmoNl = 0, gmoNl_bar = 0, gmoNha = 0;
+	
 
 
     //----- FILL TREE -----//
@@ -111,18 +117,31 @@ int main() {
             if (pythia.event[i].isFinal()) {
                 if (pythia.event[i].id() == 11) { // Electron
                     electrons.push_back(pythia.event[i]);
+                    Ne ++;
                 }
                 if (pythia.event[i].id() == -11) { // Positron
                     positrons.push_back(pythia.event[i]);
+                    Ne_bar ++;
                 }
                 if (pythia.event[i].id() == 13) { // Muon
                     muons.push_back(pythia.event[i]);
+                    Nmu ++;
                 }
                 if (pythia.event[i].id() == -13) { // Antimuon
                     antimuons.push_back(pythia.event[i]);
+                    Nmu_bar ++;
+                }
+                if (pythia.event[i].id() == 15) { // Antimuon
+                    taus.push_back(pythia.event[i]);
+                    Nta ++;
+                }
+                if (pythia.event[i].id() == -15) { // Antimuon
+                    antitaus.push_back(pythia.event[i]);
+                    Nta_bar ++;
                 }
                 if (pythia.event[i].isHadron()) { // Hadrons
                 	hadrons.push_back(pythia.event[i]);
+                	Nha ++;
                 }
                 // MOTHER-1 ANALYSIS
                 int motherIndex = pythia.event[i].mother1(); // MOTHER-1
@@ -132,27 +151,32 @@ int main() {
                     // Mother = Electron
                     if (mother.id() == 11) { // Electron
                         electrons.push_back(mother);
+                        moNe ++;
                     } else if (mother.id() == -11) { // Positron
                         positrons.push_back(mother);
+                        moNe_bar ++;
                     }
                     
                     // Mother = Muon
                     if (mother.id() == 13) { // Muon
                         muons.push_back(mother);
+                        moNmu ++;
                     } else if (mother.id() == -13) { // Anti-muon
                         antimuons.push_back(mother);
+                        moNmu_bar ++;
                     }
                     
                     // Mother = Tau
                     if (mother.id() == 15) { // Tau
                         taus.push_back(mother);
+                        moNta ++;
                     } else if (mother.id() == -15) { // Anti-tau
                         antitaus.push_back(mother);
+                        moNta_bar ++;
                     }
                     
                     if (mother.id() == 23) { // Z boson
 				        zDecays.push_back(pythia.event[i]);
-				        std::cout << "\nMAMA Z!\n";
 				    }
 				}
 				// MOTHER-2 ANALYSIS "GRANMA :)"
@@ -161,10 +185,32 @@ int main() {
                 	Particle &mother2 = pythia.event[motherIndex2];
                     if (mother2.id() == 23) { // Z boson
 				        zDecays.push_back(pythia.event[i]);
-				        std::cout << "\nGRANMA Z!!!\n";
+				    }
+				    if (mother2.id() == 11) { // electron
+				        electrons.push_back(pythia.event[i]);
+				        gmoNe ++;
+				    }
+				    if (mother2.id() == -11) { // positron
+				        positrons.push_back(pythia.event[i]);
+				        gmoNe_bar ++;
+				    }
+				    if (mother2.id() == 13) { // muon
+				        muons.push_back(pythia.event[i]);
+				        gmoNmu ++;
+				    }
+				    if (mother2.id() == -13) { // antimuon
+				        antimuons.push_back(pythia.event[i]);
+				        gmoNmu_bar ++;
+				    }
+				    if (mother2.id() == 15) { // tau
+				        taus.push_back(pythia.event[i]);
+				        gmoNta ++;
+				    }
+				    if (mother2.id() == -15) { // antitau
+				        antitaus.push_back(pythia.event[i]);
+				        gmoNta_bar ++;
 				    }
                 }
-
                 	
 
                 
@@ -270,6 +316,48 @@ int main() {
             }
         }
     }
+
+    //----- NUMBER OF PARTICLES -----//
+    Nl = Ne + Nmu + Nta;
+    Nl_bar = Ne_bar + Nmu_bar + Nta_bar;
+    moNl = moNe + moNmu + moNta;
+    moNl_bar = moNe_bar + moNmu_bar + moNta_bar;
+    gmoNl = gmoNe + gmoNmu + gmoNta;
+    gmoNl_bar = gmoNe_bar + gmoNmu_bar + gmoNta_bar;
+    
+    std::cout << "//----- NUMBER OF PARTICLES -----//\n";
+    std::cout << "//----- LEPTONS -----//\n";
+    std::cout << "//----- Total leptons: " << Nl + Nl_bar + moNl + moNl_bar + gmoNl + gmoNl_bar << "\n";
+    std::cout << "//----- Daughter -----//\n";
+    std::cout << "//----- l-: " << Nl << "\n";
+    std::cout << "//----- l+: " << Nl_bar << "\n";
+    std::cout << "//----- e-: " << Ne << "\n";
+    std::cout << "//----- e+: " << Ne_bar << "\n";
+    std::cout << "//----- mu-: " << Nmu << "\n";
+    std::cout << "//----- mu+: " << Nmu_bar << "\n";
+    std::cout << "//----- ta-: " << Nta << "\n";
+    std::cout << "//----- ta+: " << Nta_bar << "\n";
+    std::cout << "//----- Mother -----//\n";
+    std::cout << "//----- l-: " << moNl << "\n";
+    std::cout << "//----- l+: " << moNl_bar << "\n";
+    std::cout << "//----- e-: " << moNe << "\n";
+    std::cout << "//----- e+: " << moNe_bar << "\n";
+    std::cout << "//----- mu-: " << moNmu << "\n";
+    std::cout << "//----- mu+: " << moNmu_bar << "\n";
+    std::cout << "//----- ta-: " << moNta << "\n";
+    std::cout << "//----- ta+: " << moNta_bar << "\n";
+    std::cout << "//----- GrandMother -----//\n";
+    std::cout << "//----- l-: " << gmoNl << "\n";
+    std::cout << "//----- l+: " << gmoNl_bar << "\n";
+    std::cout << "//----- e-: " << gmoNe << "\n";
+    std::cout << "//----- e+: " << gmoNe_bar << "\n";
+    std::cout << "//----- mu-: " << gmoNmu << "\n";
+    std::cout << "//----- mu+: " << gmoNmu_bar << "\n";
+    std::cout << "//----- ta-: " << gmoNta << "\n";
+    std::cout << "//----- ta+: " << gmoNta_bar << "\n";
+    std::cout << "//----- HADRONS -----//\n";
+    std::cout << "//----- Total hadrons: " << Nha << "\n";
+    std::cout << "//-----------------------------//";
 
     output->Write();
     output->Close();
